@@ -1,0 +1,6 @@
+{
+  "auxiliaryCommentBefore": "istanbul ignore next",
+  "optional": [
+    "bluebirdCoroutines"
+  ]
+}
