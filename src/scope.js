@@ -8,6 +8,13 @@
 import _           from 'lodash';
 import Bluebird    from 'bluebird';
 
+
+/*!
+ * Symbol for accessing the scope cache.
+ */
+export const store = Symbol();
+
+
 /*!
  * Singleton collection to store scopes.
  */
@@ -37,9 +44,10 @@ export function scope(name, options, callback) {
  * Establishes the scope for a given request.
  */
 export async function establish(req, name) {
+  const cache = req[store];
 
   /* Scope already established, proceed */
-  if (req[name]) { return req[name]; }
+  if (cache[name]) { return cache[name]; }
 
   /* Find the most appropriate strategy */
   const strategies = scopes.get(name);
@@ -54,6 +62,6 @@ export async function establish(req, name) {
 
   /* Establish the scope */
   const ent = await strategy.callback(req);
-  return (req[name] = ent);
+  return (cache[name] = ent);
 
 }
