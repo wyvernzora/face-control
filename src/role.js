@@ -6,40 +6,35 @@
  */
 
 import _           from 'lodash';
-import {scopes}    from './scope';
 
 /*!
  * Store role callbacks.
  */
-const _callbacks = new Map();
+export const roles = new Map();
 
 
 /*!
- * Store implications.
+ * Implication mapping.
  */
-const _rules = { };
-
-
-/*!
- * Actual implication lookup map.
- */
-const _implies = { };
+export const implies = { };
 
 
 /*!
  * Expands implications of a specific role.
  */
-export function expand(role) {
+export function expand(name) {
+
+  const meta = implies[name];
 
   /* No implications */
-  if (!_rules[role]) { return [role]; }
+  if (!meta || !meta.implies) { return [name]; }
 
   /* Start recursive expansion */
-  const expansion = new Set([role]);
-  _rules[role].forEach(r => {
+  const expansion = new Set([name]);
+  for (const r of meta.implies) {
     expansion.add(r);
-    expand(r).forEach(i => expansion.add(i));
-  });
+    expand(r).forEach(expansion.add, expansion);
+  }
 
   return [...expansion];
 }
@@ -48,24 +43,17 @@ export function expand(role) {
 /*!
  * Adds an implication to the set.
  */
-export function imply(role, others) {
+export function imply(name, others) {
 
-  /* Add implication */
-  const set = (_rules[role] || []).concat(others);
-  _rules[role] = set;
+  for (const r of others) {
+    const meta = (implies[r] = implies[r] || { });
+    meta.implies = meta.implies || new Set();
+    meta.implies.add(name);
+  }
 
-  /* Generate a mapping, then reverse it */
-  const mapping = { };
-  for (const r of set) { mapping[r] = expand(r); }
-
-  Object.keys(mapping).forEach(k => {
-    const value = mapping[k];
-    for (const v of value) {
-      _implies[v] = _implies[v] || [];
-      _implies[v].push(k);
-    }
-  });
-  _.mapValues(_implies, _.uniq);
+  for (const k of Object.keys(implies)) {
+    implies[k].closure = expand(k);
+  }
 
 }
 
@@ -73,9 +61,9 @@ export function imply(role, others) {
 /*!
  * Resolves a set of roles into all implied roles.
  */
-export function resolve(...roles) {
-  return roles
-    .map(r => _implies[r] || [])
+export function resolve(...names) {
+  return _(names)
+    .map(r => implies[r] ? implies[r].closure : [r])
     .flatten()
     .uniq()
     .value();
@@ -86,16 +74,8 @@ export function resolve(...roles) {
  * Adds a role.
  */
 export function define(name, callback) {
-  if (_callbacks.has(name)) {
+  if (roles.has(name)) {
     throw new Error(`Cannot redefine role '${name}'`);
   }
-
-  if (/\./.test(name)) {
-    const scope = name.split('.', 2)[0];
-    if (!scopes.has(scope)) {
-      throw new Error(`Scope '${scope}' is not defined.`);
-    }
-  }
-
-  _callbacks.set(name, callback);
+  roles.set(name, callback);
 }
