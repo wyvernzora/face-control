@@ -32,8 +32,7 @@ export function define(name, options, callback) {
 
   cfg.name = name.toLowerCase();
   cfg.hint = options.hint;
-  cfg.deps = _.flatten([options.deps]);
-  cfg.required = options.required;
+  cfg.deps = _([options.deps]).flatten().compact().value();
   cfg.callback = callback;
 
   meta.push(cfg);
@@ -45,7 +44,7 @@ export function define(name, options, callback) {
  * Establishes the scope for a given request.
  */
 export async function establish(req, name) {
-  const cache = req[store];
+  const cache = (req[store] = req[store] || { });
 
   /* Scope already established, proceed */
   if (cache[name]) { return cache[name]; }
@@ -57,7 +56,7 @@ export async function establish(req, name) {
     err.status = 500;
     throw err;
   }
-  const strategy = _(strategies).findLast(i => req.params[i.hint] || !i.hint).value();
+  const strategy = _(strategies).findLast(i => req.params[i.hint] || !i.hint);
 
   /* Work on all dependencies */
   const promises = strategy.deps.map(i => establish(req, i));
@@ -66,7 +65,7 @@ export async function establish(req, name) {
   /* Establish the scope */
   const ent = await strategy.callback(req);
 
-  if (strategy.required && !ent) {
+  if (!ent) {
     const err = new Error(`${_.capitalize(name)} not found.`);
     err.status = 404;
     throw err;
