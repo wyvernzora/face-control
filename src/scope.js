@@ -24,7 +24,7 @@ export const scopes = new Map();
 /*!
  * Adds a scope definition to the scope manager.
  */
-export function scope(name, options, callback) {
+export function define(name, options, callback) {
   const meta = scopes.get(name) || [ ];
   const cfg  = { };
 
@@ -36,7 +36,7 @@ export function scope(name, options, callback) {
   cfg.required = options.required;
   cfg.callback = callback;
 
-  scope.push(cfg);
+  meta.push(cfg);
   scopes.set(name, meta);
 }
 

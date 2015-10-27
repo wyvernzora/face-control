@@ -6,6 +6,7 @@
  */
 
 import _           from 'lodash';
+import {scopes}    from './scope';
 
 /*!
  * Store role callbacks.
@@ -88,5 +89,13 @@ export function define(name, callback) {
   if (_callbacks.has(name)) {
     throw new Error(`Cannot redefine role '${name}'`);
   }
+
+  if (/\./.test(name)) {
+    const scope = name.split('.', 2)[0];
+    if (!scopes.has(scope)) {
+      throw new Error(`Scope '${scope}' is not defined.`);
+    }
+  }
+
   _callbacks.set(name, callback);
 }
