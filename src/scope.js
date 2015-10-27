@@ -33,6 +33,7 @@ export function scope(name, options, callback) {
   cfg.name = name.toLowerCase();
   cfg.hint = options.hint;
   cfg.deps = _.flatten([options.deps]);
+  cfg.required = options.required;
   cfg.callback = callback;
 
   scope.push(cfg);
@@ -52,7 +53,9 @@ export async function establish(req, name) {
   /* Find the most appropriate strategy */
   const strategies = scopes.get(name);
   if (!strategies || strategies.length === 0) {
-    throw new Error(`Scope '${name}' is not defined.`);
+    const err = new Error(`Scope '${name}' is not defined.`);
+    err.status = 500;
+    throw err;
   }
   const strategy = _(strategies).findLast(i => req.params[i.hint] || !i.hint).value();
 
@@ -62,6 +65,13 @@ export async function establish(req, name) {
 
   /* Establish the scope */
   const ent = await strategy.callback(req);
+
+  if (strategy.required && !ent) {
+    const err = new Error(`${_.capitalize(name)} not found.`);
+    err.status = 404;
+    throw err;
+  }
+
   return (cache[name] = ent);
 
 }
