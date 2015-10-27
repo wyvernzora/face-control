@@ -122,4 +122,23 @@ describe('establish(req, name)', function() {
       .to.be.rejectedWith('Test not found.');
   });
 
+  it('should use the first most suitable strategy', co(function*() {
+    const resolver = Sinon.spy(co(function*() { return 'foo'; }));
+    target.define('test', { hint: 'test' }, resolver);
+
+    const dep = Sinon.spy(co(function*() { return 'bar'; }));
+    target.define('test', { hint: 'test' }, dep);
+
+    const request = { params: { test: 'foo' } };
+    const scope = yield target.establish(request, 'test');
+
+    expect(scope)
+      .to.equal('foo');
+    expect(resolver)
+      .to.be.calledOnce
+      .to.be.calledWith(request);
+    expect(dep)
+      .to.have.callCount(0);
+  }));
+
 });

@@ -56,7 +56,7 @@ export async function establish(req, name) {
     err.status = 500;
     throw err;
   }
-  const strategy = _(strategies).findLast(i => req.params[i.hint] || !i.hint);
+  const strategy = _(strategies).find(i => req.params[i.hint] || !i.hint);
 
   /* Work on all dependencies */
   const promises = strategy.deps.map(i => establish(req, i));
