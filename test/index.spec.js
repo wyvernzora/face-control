@@ -30,7 +30,7 @@ describe('Role', function() {
 });
 
 describe('Action', function() {
-
+  require('./action.spec.js');
 });
 
 describe('Integration', function() {
