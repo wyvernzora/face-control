@@ -59,7 +59,7 @@ export async function establish(req, name) {
   const strategy = _(strategies).find(i => req.params[i.hint] || !i.hint);
 
   /* Work on all dependencies */
-  const promises = strategy.deps.map(i => establish(req, i));
+  const promises = strategy.deps.map(i => Bluebird.try(() => establish(req, i)));
   await Bluebird.all(promises);
 
   /* Establish the scope */
