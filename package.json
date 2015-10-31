@@ -24,7 +24,7 @@
     "npm": ">=2.14.0"
   },
   "scripts": {
-    "test": "./node_modules/.bin/gulp coverage && && ./node_modules/.bin/codeclimate-test-reporter < coverage/lcov.info",
+    "test": "./node_modules/.bin/gulp coverage && ./node_modules/.bin/codeclimate-test-reporter < coverage/lcov.info",
     "prepublish": "./node_modules/.bin/gulp rebuild"
   },
   "dependencies": {
