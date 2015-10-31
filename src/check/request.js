@@ -7,23 +7,16 @@
 
 import Bluebird    from 'bluebird';
 
-import { $$cache } from './scope';
 import checkScope  from './scope';
 
 
-/* Utility function to wrap functions into Bluebird.try */
-function wrap(fn, ...args) {
-  return Bluebird.try(() => fn(...args));
-}
-
-
-export async function request(manager, tree, req) {
+export default async function request(manager, tree, req) {
 
   /* Always run the @@global scope first */
   if (tree['@@global']) {
     for (const key of tree['@@global']) {
       const callback = manager.roles[key];
-      const result = await wrap(callback, null, key, req);
+      const result = await Bluebird.resolve(callback(null, key, req));
       if (result) { return true; }
     }
   }
@@ -33,13 +26,12 @@ export async function request(manager, tree, req) {
     if (scope === '@@global') { continue; }
 
     /* Establish the scope in question */
-    checkScope(manager, req, scope);
+    const entity = await checkScope(manager, req, scope);
 
     /* Run all specified roles */
     for (const key of tree[scope]) {
       const callback = manager.roles[key];
-      const entity = req[$$cache][key];
-      const result = await wrap(callback, entity, `${scope}.${key}`, req);
+      const result = await Bluebird.resolve(callback(entity, `${scope}.${key}`, req));
       if (result) { return true; }
     }
   }
