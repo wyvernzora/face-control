@@ -1,6 +1,6 @@
 {
   "name": "face-control",
-  "description": "Access control for Express.js",
+  "description": "Intelligent access management for express.js",
   "version": "1.0.1",
   "homepage": "https://github.com/jluchiji/face-control",
   "author": {
@@ -62,7 +62,7 @@
     "sinon": "^1.15.4",
     "sinon-chai": "^2.8.0"
   },
-  "keywords": [],
+  "keywords": [ "role", "authorization", "permission", "express" ],
   "eslintConfig": {
     "root": true,
     "extends": "airbnb/base",
