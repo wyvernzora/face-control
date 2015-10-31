@@ -90,14 +90,8 @@ app.use(FaceControl('self-destruct', 'open-airlock'));
 ```
 
 ## License
-Face Control is hereby released under terms of GNU AGPL v3. It means that if you
-use this library in a server-side application, you are required to license that
-application under GNU AGPL v3 as well and make its source code publicly available.
-
-The reasoning behind this license choice is to discourage our competitors from
-using this library while keeping it open source. If you wish to use this library
-while keeping your application proprietary, we would be happy to discuss a more
-permissive license.
+[MIT][2]
 
 
 [1]: https://github.com/tschaub/authorized
+[2]: https://opensource.org/licenses/MIT

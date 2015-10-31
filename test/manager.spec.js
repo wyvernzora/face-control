@@ -2,7 +2,7 @@
  * test/manager.spec.js
  *
  * @author  Denis Luchkin-Zhou <denis@ricepo.com>
- * @license AGPL v3
+ * @license MIT
  */
 
 const Manager      = dofile('lib/manager');

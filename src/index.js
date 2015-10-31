@@ -2,7 +2,7 @@
  * index.js
  *
  * @author  Denis Luchkin-Zhou <denis@ricepo.com>
- * @license AGPL v3
+ * @license MIT
  */
 
 import Check       from './check/request';

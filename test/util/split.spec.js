@@ -2,7 +2,7 @@
  * test/util/split.spec.js
  *
  * @author  Denis Luchkin-Zhou <denis@ricepo.com>
- * @license AGPL v3
+ * @license MIT
  */
 
 const split        = dofile('lib/util/split');

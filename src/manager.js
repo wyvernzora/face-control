@@ -2,7 +2,7 @@
  * manager.js
  *
  * @author  Denis Luchkin-Zhou <denis@ricepo.com>
- * @license AGPL v3
+ * @license MIT
  */
 
 import _           from 'lodash';

@@ -2,7 +2,7 @@
  * check/request.js
  *
  * @author  Denis Luchkin-Zhou <denis@ricepo.com>
- * @license AGPL v3
+ * @license MIT
  */
 
 import Bluebird    from 'bluebird';

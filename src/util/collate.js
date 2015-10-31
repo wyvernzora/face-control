@@ -2,7 +2,7 @@
  * util/collate.js
  *
  * @author  Denis Luchkin-Zhou <denis@ricepo.com>
- * @license AGPL v3
+ * @license MIT
  */
 
 import split       from './split';
