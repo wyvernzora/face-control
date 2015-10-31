@@ -3,6 +3,8 @@
 [![Circle CI][7]][8]
 [![Code Climate][3]][4]
 [![Test Coverage][5]][6]
+[![NPM][9]][10]
+[![License][11]][2]
 
 FaceControl is an opinionated Express middleware for scoped, role-based access management.
 It is heavily inspired by [authorized][1], but attempts to provide a simpler, more
@@ -105,3 +107,6 @@ app.use(FaceControl('self-destruct', 'open-airlock'));
 [6]: https://codeclimate.com/github/jluchiji/face-control/coverage
 [7]: https://circleci.com/gh/jluchiji/face-control.svg?style=shield
 [8]: https://circleci.com/gh/jluchiji/face-control
+[9]: https://img.shields.io/npm/v/face-control.svg
+[10]: https://www.npmjs.com/package/face-control
+[11]: https://img.shields.io/npm/l/face-control.svg
