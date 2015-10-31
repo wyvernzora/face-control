@@ -6,6 +6,7 @@
  */
 
 import Check       from './check/request';
+import { $$cache } from './check/scope';
 import Collate     from './util/collate';
 import Manager     from './manager';
 
@@ -13,6 +14,14 @@ import Manager     from './manager';
  * Permission manager.
  */
 const manager = new Manager();
+
+
+/*!
+ * Function to get scope from scope cache.
+ */
+function scope(name) {
+  return this[$$cache][name];
+}
 
 
 /*!
@@ -25,6 +34,7 @@ function FaceControl(...actions) {
 
   /* Create the middleware function that checks the request */
   return function(req, res, next) {
+    req.scope = scope;
     const promise = Check(manager, tree, req);
 
     promise

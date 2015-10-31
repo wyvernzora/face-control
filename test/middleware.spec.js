@@ -30,6 +30,11 @@ it('should call next() if everything checks out', function(done) {
   mware(request, null, (err) => {
     expect(err)
       .not.to.exist;
+    expect(request)
+      .to.have.property('scope')
+      .that.is.a('function');
+    expect(request.scope('test'))
+      .to.equal('test');
     done();
   });
 
