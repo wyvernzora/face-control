@@ -6,94 +6,108 @@
 [![NPM][9]][10]
 [![License][11]][2]
 
-FaceControl is an opinionated Express middleware for scoped, role-based access management.
-It is heavily inspired by [authorized][1], but attempts to provide a simpler, more
-optimized process of both defining and verifying permissions.
+Face Control is an opinionated access control middleware for Express. It is
+heavily inspired by [authorized][1], but also provides a more intelligent way
+to perform permission checks.
 
-## Getting Started
+# Getting Started
+
+## Installation
+Installing the module is fairly straightforward:
 ```sh
 $ npm install face-control --save
 ```
 
-## Documentation
+## Basics
+In this section, I will describe basic ideas behind Face Control by giving an
+example of space fleet permission hierarchy.
 
-### `scope(name, [options,] callback)`
-Scope is a domain that a role can belong to. A scope can be defined in the
-following way:
+### Scope
+A scope is a domain that contains various roles. For instance, a spaceship captain's
+`ship:captain` role is only valid on his ship, therefore `ship` is the scope and
+`captain` is the role contained in that scope.
+
+In order to minimize the number of database round-trips, Face Control gives you
+an option to tie a scope to a URL parameter via a *hint*. For instance, when a
+`fleet` scope is requested, and URL contains `:shipId` parameter, it will automagically
+see that it can first retrieve the `ship` scope, then from `ship.fleetId` extract
+the `fleet` scope.
 ```js
-FaceControl.scope('organization', async function() { ... });
+/* https://galactic-federation.net/ship/:shipId */
+
+/* Teaches Face Control how to find the ship info */
+FaceControl.scope('ship', { hint: 'shipId' }, ...);
+
+/* Teaches Face Control how to find fleet info from ship info */
+FaceControl.scope('fleet', { hint: 'shipId', deps: 'ship' }, ...);
+
 ```
-You can provide additional information about the scope via the `options` parameter:
+As you can see, `hint` tells Face Control to use the provided callback when
+there is a `:shipId` specified, while `deps` tells it that it needs to retrieve
+`ship` info before trying to find out what `fleet` it is from.
 
- + `hint`: this option indicates that scope callback is used only when a URL parameter
- with the specified name exists.
+Of course, you can provide multiple hinted callbacks for the same scope. In that
+case, Face Control will find the most appropriate callback to use.
 
- + `deps`: dependencies, i.e. scopes that have to be established before trying to
- establish current one.
+```js
+/* https://galactic-federation.net/fleet/:fleetId */
 
-Combining above information, it is possible to define scopes with complex relationships.
-Using an example of github repositories:
+/* Teaches Face Control how to find the fleet info from :fleetId */
+FaceControl.scope('fleet', { hint: 'fleetId' }, ...);
+```
+
+### Role
+A role signifies a set of actions a person is allowed to perform. Roles can be
+global or tied to a specific scope. For the purpose of definition, roles are not
+bound to any scope, but Face Control will conveniently provide you the scope that
+was established for the request in question. It's magic, isn't it?
+
 ```js
 
-// Used when on URL like: /orgs/:orgId/repo
-FaceControl.scope('organization', { hint: 'orgId' }, async function(req) {
-  return model.findOrganization(req.params.orgId);
+FaceControl.role('captain', function(entity, role, request) {
+
+  /* When the role `captain` is used without scope, it makes no sense */
+  if (!entity) { throw new Error('Captain must have a ship!'); }
+
+  /* Now, we can check if the person IS a captain */
+  if (!request.user.isCaptain) { return false; }
+
+  /* Here we can check if the user is the captain of THE ship */
+  if (entity.id !== request.user.shipId) { return false; }
+
+  /* Welcome, captain! */
+  return true;
+
 });
 
-// Used when on URL like: /repos/:repoId
-FaceControl.scope('organization', { hint: 'repoId', deps: 'repo' }, async function(req) {
-  const repo = req.scope('repo');
-  return model.findOrganization(repo.orgId);
-});
-
-// Finds repo scope
-FaceControl.scope('repo', async function(req) {
-  return model.findRepo(req.params.repoId);
-});
-
 ```
 
-Please note that the callback function should either be synchronous or return a
-promise.
-
-### `role(name, callback)`
-Defines a role and associated callback function that verifies the role.
-`name` parameter should not be prefixed with the scope, for example:
+### Action
+Action is essentially a set of roles that are allowed to perform a certain action.
+For instance, `self-destruct` action should only be executed by `ship:captain` or
+`fleet:admiral`. So, here we go:
 ```js
-FaceControl.role('manager', function(ent, role, req) { return req.user.isManager; });
+FaceControl.action('self-destruct', [ 'ship:captain', 'fleet:admiral' ]);
 ```
 
-If during middleware creation you specified a scoped role like `org.manager`, the
-`ent` parameter will be the scope entity `org`. Otherwise, `ent` parameter will be
-`null`. `role` parameter is the full scoped name of the role that is being checked.
-
-Of course, the callback function can be async or return a promise.
-
-
-### `action(name, roles)`
-Defines an action and roles that can execute it. Roles in this case have to be scoped.
+### Imply
+Let's say we want `fleet:admiral` to be able to do anything a `ship:captain` is
+able to. Writing both roles in every action makes configuration a tangled mess.
+Instead, you can just say 'let fleet admiral automatically have ship captain powers'!
 ```js
-FaceControl.action('self-destruct', ['ship:captain', 'fleet:admiral']);
+FaceControl.imply('fleet:admiral', [ 'ship:captain' ]);
 ```
+After this, when defining actions you only need to specify `ship:captain`, and
+the rest is handled for you.
 
-### `imply(role, ...implied)`
-States that anyone having `role` should also be implicitly granted all `implied`
-roles. For example, `ship:captain` is also a `ship:crew`:
+### Middleware
+So, after going through all the trouble teaching Face Control all fine details of
+your permission hierarchy, putting it to use is incredibly simple:
 ```js
-FaceControl.imply('ship:captain', 'ship:crew');
+app.use(FaceControl('ship:captain', 'hangar:technician'));
 ```
-The implications can have multiple levels:
-```js
-FaceControl.imply('fleet:admiral', 'ship:captain');
-```
-After both examples above, `fleet:admiral` will be able to access any action accessible
-to `ship:captain` and `ship:crew`.
+And that's it! Face Control will do the rest.
 
-### `FaceControl(...actions)`
-This function creates the Express.js middleware that checks permissions.
-```js
-app.use(FaceControl('self-destruct', 'open-airlock'));
-```
 
 ## License
 [MIT][2]
