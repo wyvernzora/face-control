@@ -36,3 +36,7 @@ describe('Check', function() {
   require('./check/scope.spec.js');
   require('./check/request.spec.js');
 });
+
+describe('Middleware', function() {
+  require('./middleware.spec.js');
+});
