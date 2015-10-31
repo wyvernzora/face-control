@@ -1,5 +1,5 @@
 /**
- * index.spec.js
+ * test/index.spec.js
  *
  * @author  Denis Luchkin-Zhou <denis@ricepo.com>
  * @license MIT
@@ -21,18 +21,18 @@ global.dofile      = require('app-root-path').require;
 /*!
  * Start tests
  */
-describe('Scope', function() {
-  require('./scope.spec.js');
+describe('Manager', function() {
+  require('./manager.spec.js');
 });
 
-describe('Role', function() {
-  require('./role.spec.js');
+describe('Utilities', function() {
+  require('./util/closure.spec.js');
+  require('./util/collate.spec.js');
+  require('./util/expand.spec.js');
+  require('./util/split.spec.js');
 });
 
-describe('Action', function() {
-  require('./action.spec.js');
-});
-
-describe('Integration', function() {
-
+describe('Check', function() {
+  require('./check/scope.spec.js');
+  require('./check/request.spec.js');
 });
