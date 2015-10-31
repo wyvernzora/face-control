@@ -2,7 +2,7 @@
  * test/index.spec.js
  *
  * @author  Denis Luchkin-Zhou <denis@ricepo.com>
- * @license MIT
+ * @license AGPL v3
  */
 
 const Chai         = require('chai');

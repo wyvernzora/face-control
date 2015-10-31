@@ -2,7 +2,7 @@
  * test/util/expand.spec.js
  *
  * @author  Denis Luchkin-Zhou <denis@ricepo.com>
- * @license MIT
+ * @license AGPL v3
  */
 
 const Manager      = dofile('lib/manager');

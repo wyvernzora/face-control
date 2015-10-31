@@ -2,7 +2,7 @@
  * check/request.js
  *
  * @author  Denis Luchkin-Zhou <denis@ricepo.com>
- * @license MIT
+ * @license AGPL v3
  */
 
 import Bluebird    from 'bluebird';
@@ -39,7 +39,7 @@ export async function request(manager, tree, req) {
     for (const key of tree[scope]) {
       const callback = manager.roles[key];
       const entity = req[$$cache][key];
-      const result = await wrap(callback, entity, key, req);
+      const result = await wrap(callback, entity, `${scope}.${key}`, req);
       if (result) { return true; }
     }
   }
