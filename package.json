@@ -1,7 +1,7 @@
 {
   "name": "face-control",
   "description": "Access control for Express.js",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "homepage": "https://github.com/jluchiji/face-control",
   "author": {
     "name": "Denis Luchkin-Zhou",
