@@ -1,5 +1,9 @@
 # Face Control
 
+[![Circle CI][7]][8]
+[![Code Climate][3]][4]
+[![Test Coverage][5]][6]
+
 FaceControl is an opinionated Express middleware for scoped, role-based access management.
 It is heavily inspired by [authorized][1], but attempts to provide a simpler, more
 optimized process of both defining and verifying permissions.
@@ -92,6 +96,12 @@ app.use(FaceControl('self-destruct', 'open-airlock'));
 ## License
 [MIT][2]
 
-
 [1]: https://github.com/tschaub/authorized
 [2]: https://opensource.org/licenses/MIT
+
+[3]: https://codeclimate.com/github/jluchiji/face-control/badges/gpa.svg
+[4]: https://codeclimate.com/github/jluchiji/face-control
+[5]: https://codeclimate.com/github/jluchiji/face-control/badges/coverage.svg
+[6]: https://codeclimate.com/github/jluchiji/face-control/coverage
+[7]: https://circleci.com/gh/jluchiji/face-control.svg?style=svg
+[8]: https://circleci.com/gh/jluchiji/face-control
