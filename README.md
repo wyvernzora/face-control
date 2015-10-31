@@ -103,5 +103,5 @@ app.use(FaceControl('self-destruct', 'open-airlock'));
 [4]: https://codeclimate.com/github/jluchiji/face-control
 [5]: https://codeclimate.com/github/jluchiji/face-control/badges/coverage.svg
 [6]: https://codeclimate.com/github/jluchiji/face-control/coverage
-[7]: https://circleci.com/gh/jluchiji/face-control.svg?style=svg
+[7]: https://circleci.com/gh/jluchiji/face-control.svg?style=shield
 [8]: https://circleci.com/gh/jluchiji/face-control
