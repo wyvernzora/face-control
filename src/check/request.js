@@ -5,10 +5,12 @@
  * @license MIT
  */
 
+import Debug       from 'debug';
+import Chalk       from 'chalk';
 import Bluebird    from 'bluebird';
-
 import checkScope  from './scope';
 
+const debug = Debug('fc:request');
 
 export default async function request(manager, tree, req) {
 
@@ -17,7 +19,11 @@ export default async function request(manager, tree, req) {
     for (const key of tree['@@global']) {
       const callback = manager.roles[key];
       const result = await Bluebird.resolve(callback(null, key, req));
-      if (result) { return true; }
+      if (result) {
+        debug(Chalk.bold.green('allow') + ` @@global:${key}`);
+        return true;
+      }
+      debug(Chalk.bold.red('deny') + ` @@global:${key}`);
     }
   }
 
@@ -32,7 +38,11 @@ export default async function request(manager, tree, req) {
     for (const key of tree[scope]) {
       const callback = manager.roles[key];
       const result = await Bluebird.resolve(callback(entity, `${scope}.${key}`, req));
-      if (result) { return true; }
+      if (result) {
+        debug(Chalk.bold.green('allow') + ` ${scope}:${key}`);
+        return true;
+      }
+      debug(Chalk.bold.red('deny') + ` ${scope}:${key}`);
     }
   }
 

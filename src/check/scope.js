@@ -6,7 +6,11 @@
  */
 
 import _           from 'lodash';
+import Debug       from 'debug';
+import Chalk       from 'chalk';
 import Bluebird    from 'bluebird';
+
+const debug = Debug('fc:scope');
 
 
 /*!
@@ -23,7 +27,10 @@ export default async function scope(manager, request, name) {
   const cache = (request[$$cache] = request[$$cache] || { });
 
   /* If we already have the scope cached, proceed */
-  if (cache[name]) { return cache[name]; }
+  if (cache[name]) {
+    debug(Chalk.bold.green('cached') + ` ${name}`);
+    return cache[name];
+  }
 
   /* Find the best strategy using hints */
   const strategies = manager.scopes[name];
@@ -35,6 +42,7 @@ export default async function scope(manager, request, name) {
   const key = _.find(Object.keys(request.params), i => strategies[i]) || '@@null';
 
   /* If the strategy found is undefined, we got problems */
+  debug(Chalk.bold.yellow('hint') + ` ${key}`);
   const strategy = strategies[key];
   if (!strategy) {
     throw new Error(`No suitable strategy found for scope '${name}'.`);
@@ -45,6 +53,7 @@ export default async function scope(manager, request, name) {
   await Bluebird.all(promises);
 
   /* Establish the target scope itself */
+  debug(Chalk.bold.red('fetch') + ` ${name}`);
   const entity = await Bluebird.try(() => strategy.callback(request));
 
   /* If we fail, we got a 404 on our hands */

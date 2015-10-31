@@ -6,13 +6,18 @@
  */
 
 import _           from 'lodash';
+import Debug       from 'debug';
+import Chalk       from 'chalk';
 import expand      from './util/expand';
 import closure     from './util/closure';
+
+const debug = Debug('fc:manager');
 
 
 export default class Manager {
 
   constructor() {
+    debug(Chalk.bold.green('instantiate'));
     this.scopes  = { };
     this.roles   = { };
     this.actions = { };
@@ -49,6 +54,7 @@ export default class Manager {
     }
 
     /* Setup the scope info */
+    debug(Chalk.bold.magenta('scope') + ` ${name} (hint=${scope.hint}; deps=${scope.deps.length})`);
     meta[scope.hint] = scope;
     this.scopes[name] = meta;
   }
@@ -66,6 +72,7 @@ export default class Manager {
     }
 
     /* Setup the role definition */
+    debug(Chalk.bold.magenta('role') + ` ${name}`);
     this.roles[name] = callback;
   }
 
@@ -83,6 +90,8 @@ export default class Manager {
 
     /* Setup the action with its implication closure */
     this.actions[name] = closure(this, roles);
+    debug(Chalk.bold.magenta('action') + ` ${name}`);
+    debug(this.actions[name]);
   }
 
 
