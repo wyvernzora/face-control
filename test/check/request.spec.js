@@ -40,8 +40,9 @@ describe('request(manager, tree, req)', function() {
     expect(result)
       .to.be.true;
     expect(this.foo)
-      .to.be.calledOnce
-      .to.be.calledWith(null, 'foo', request);
+      .to.be.calledOnce;
+    expect(this.foo.firstCall.args)
+      .to.deep.equal([ null, { scope: null, role: 'foo' }, request]);
     expect(this.bar)
       .to.have.callCount(0);
     expect(this.baz)
@@ -70,12 +71,12 @@ describe('request(manager, tree, req)', function() {
       .to.be.calledOnce
       .to.be.calledBefore(this.bar)
       .to.be.calledBefore(this.baz);
-    expect(this.foo)
-      .to.be.calledWith(null, 'foo', request);
-    expect(this.bar)
-      .to.be.calledWith('test-scope', 'test.bar', request);
-    expect(this.baz)
-      .to.be.calledWith('test-scope', 'test.baz', request);
+    expect(this.foo.firstCall.args)
+      .to.deep.equal([ null,  { scope: null, role: 'foo' }, request ]);
+    expect(this.bar.firstCall.args)
+      .to.deep.equal([ 'test-scope',  { scope: 'test', role: 'bar' }, request ]);
+    expect(this.baz.firstCall.args)
+      .to.deep.equal([ 'test-scope', { scope: 'test', role: 'baz' }, request ]);
   }));
 
   it('should work when there are no global scopes', co(function*() {
@@ -98,11 +99,13 @@ describe('request(manager, tree, req)', function() {
     expect(this.foo)
       .to.have.callCount(0);
     expect(this.bar)
-      .to.be.calledOnce
-      .to.be.calledWith('test-scope', 'test.bar', request);
+      .to.be.calledOnce;
+    expect(this.bar.firstCall.args)
+      .to.deep.equal([ 'test-scope',  { scope: 'test', role: 'bar' }, request ]);
     expect(this.baz)
-      .to.be.calledOnce
-      .to.be.calledWith('test-scope', 'test.baz', request);
+      .to.be.calledOnce;
+    expect(this.baz.firstCall.args)
+      .to.deep.equal([ 'test-scope', { scope: 'test', role: 'baz' }, request ]);
   }));
 
   it('should result in false when nothing matches', co(function*() {
@@ -124,14 +127,17 @@ describe('request(manager, tree, req)', function() {
     expect(result)
       .to.be.false;
     expect(this.foo)
-      .to.be.calledOnce
-      .to.be.calledWith(null, 'foo', request);
+      .to.be.calledOnce;
+    expect(this.foo.firstCall.args)
+      .to.deep.equal([ null,  { scope: null, role: 'foo' }, request ]);
     expect(this.bar)
-      .to.be.calledOnce
-      .to.be.calledWith('test-scope', 'test.bar', request);
+      .to.be.calledOnce;
     expect(this.baz)
-      .to.be.calledOnce
-      .to.be.calledWith('test-scope', 'test.baz', request);
+      .to.be.calledOnce;
+    expect(this.bar.firstCall.args)
+      .to.deep.equal([ 'test-scope',  { scope: 'test', role: 'bar' }, request ]);
+    expect(this.baz.firstCall.args)
+      .to.deep.equal([ 'test-scope', { scope: 'test', role: 'baz' }, request ]);
   }));
 
   it('should propagate errors via promise rejections', function() {

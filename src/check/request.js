@@ -18,7 +18,8 @@ export default async function request(manager, tree, req) {
   if (tree['@@global']) {
     for (const key of tree['@@global']) {
       const callback = manager.roles[key];
-      const result = await Bluebird.resolve(callback(null, key, req));
+      const info = { scope: null, role: key };
+      const result = await Bluebird.resolve(callback(null, info, req));
       if (result) {
         debug(Chalk.bold.green('allow') + ` @@global:${key}`);
         return true;
@@ -37,7 +38,8 @@ export default async function request(manager, tree, req) {
     /* Run all specified roles */
     for (const key of tree[scope]) {
       const callback = manager.roles[key];
-      const result = await Bluebird.resolve(callback(entity, `${scope}.${key}`, req));
+      const info = { scope: scope, role: key };
+      const result = await Bluebird.resolve(callback(entity, info, req));
       if (result) {
         debug(Chalk.bold.green('allow') + ` ${scope}:${key}`);
         return true;
