@@ -35,6 +35,11 @@ it('should call next() if everything checks out', function(done) {
       .that.is.a('function');
     expect(request.scope('test'))
       .to.equal('test');
+
+    const promise = request.can('greet');
+    expect(promise)
+      .to.eventually.equal(true);
+
     done();
   });
 
@@ -50,6 +55,11 @@ it('should call next() if request is denied', function(done) {
       .to.exist
       .to.be.instanceOf(Error)
       .to.have.property('message', 'Permission denied: deny');
+
+    const promise = request.can('deny');
+    expect(promise)
+      .to.eventually.equal(false);
+
     done();
   });
 
@@ -65,6 +75,11 @@ it('should call next() if an error occurs', function(done) {
       .to.exist
       .to.be.instanceOf(Error)
       .to.have.property('message', 'test error');
+
+    const promise = request.can('crash');
+    expect(promise)
+      .to.be.rejectedWith('test error');
+
     done();
   });
 

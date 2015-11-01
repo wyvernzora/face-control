@@ -25,6 +25,20 @@ function scope(name) {
 
 
 /*!
+ * Function to retroactively check additional permissions.
+ */
+function can(...actions) {
+
+  /* Get the scope-role tree */
+  const tree = Collate(manager, actions);
+
+  /* Check the permissions */
+  return Check(manager, tree, this);
+
+}
+
+
+/*!
  * Middleware factory.
  */
 function FaceControl(...actions) {
@@ -35,6 +49,7 @@ function FaceControl(...actions) {
   /* Create the middleware function that checks the request */
   return function(req, res, next) {
     req.scope = scope;
+    req.can = can;
     const promise = Check(manager, tree, req);
 
     promise
