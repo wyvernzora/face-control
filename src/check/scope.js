@@ -48,7 +48,8 @@ export default async function scope(manager, request, name) {
   debug(Chalk.bold.yellow('hint') + ` ${key}`);
   const strategy = strategies[key];
   if (!strategy) {
-    throw new Error(`No suitable strategy found for scope '${name}'.`);
+    debug(Chalk.bold.red('no strategy') + ` ${name}`);
+    return null;
   }
 
   /* Establish all dependencies first */

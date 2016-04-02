@@ -106,11 +106,11 @@ describe('scope(manager, request, name)', function() {
       .to.be.rejectedWith('Scope \'test\' is not defined.');
   });
 
-  it('should throw if no suitable strategy found', function() {
+  it('should result in null if no suitable strategy found', function() {
     const promise = checkScope(this.manager, { params: { } }, 'foo');
 
     expect(promise)
-      .to.be.rejectedWith('No suitable strategy found for scope \'foo\'');
+      .to.eventually.equal(null);
   });
 
 });
