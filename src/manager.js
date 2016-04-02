@@ -54,11 +54,15 @@ export default class Manager {
       throw new Error(`Cannot overwrite scope '${scope.name}' with hint '${scope.hint}'`);
     }
 
+    /* Push into priority list if not already added */
+    if (!this.scopes[name]) {
+      this.priority.push(name);
+    }
+
     /* Setup the scope info */
     debug(Chalk.bold.magenta('scope') + ` ${name} (hint=${scope.hint}; deps=${scope.deps.length})`);
     meta[scope.hint] = scope;
     this.scopes[name] = meta;
-    this.priority.push(name);
   }
 
 
