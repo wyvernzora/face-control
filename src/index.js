@@ -6,7 +6,6 @@
  */
 
 import Check       from './check/request';
-import { $$cache } from './check/scope';
 import Collate     from './util/collate';
 import Manager     from './manager';
 
@@ -17,23 +16,15 @@ const manager = new Manager();
 
 
 /*!
- * Function to get scope from scope cache.
- */
-function scope(name) {
-  return this[$$cache][name];
-}
-
-
-/*!
  * Function to retroactively check additional permissions.
  */
-function can(...actions) {
+function can(req, ...actions) {
 
   /* Get the scope-role tree */
   const tree = Collate(manager, actions);
 
   /* Check the permissions */
-  return Check(manager, tree, this);
+  return Check(manager, tree, req);
 
 }
 
@@ -48,8 +39,6 @@ function FaceControl(...actions) {
 
   /* Create the middleware function that checks the request */
   return function(req, res, next) {
-    req.scope = scope;
-    req.can = can;
     const promise = Check(manager, tree, req);
 
     promise
@@ -74,7 +63,7 @@ FaceControl.scope  = manager.scope.bind(manager);
 FaceControl.role   = manager.role.bind(manager);
 FaceControl.action = manager.action.bind(manager);
 FaceControl.imply  = manager.imply.bind(manager);
-
+FaceControl.can    = can;
 
 /*!
  * Export the thing.
