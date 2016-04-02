@@ -23,7 +23,6 @@ export default async function request(manager, tree, req) {
 
     /* Run all specified roles */
     for (const key of tree[scope]) {
-      const callback = manager.roles[key];
 
       /* Generate the scope info */
       const info = { role: key };
@@ -35,6 +34,10 @@ export default async function request(manager, tree, req) {
         info.qualified = `${scope}.${key}`;
       }
 
+      const callback = manager.roles[info.qualified];
+      if (!callback) {
+        throw new Error(`Role '${info.qualified}' is not defined`);
+      }
       const result = await Bluebird.resolve(callback(entity, info, req));
       if (result) {
         debug(Chalk.bold.green('allow') + ` ${scope}:${key}`);

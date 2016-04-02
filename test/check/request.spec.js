@@ -53,9 +53,9 @@ describe('request(manager, tree, req)', function() {
     this.foo = Sinon.spy(co(function*() { return null; }));
     this.manager.role('foo', this.foo);
     this.bar = Sinon.spy(co(function*() { return null; }));
-    this.manager.role('bar', this.bar);
+    this.manager.role('test.bar', this.bar);
     this.baz = Sinon.spy(co(function*() { return 'baz'; }));
-    this.manager.role('baz', this.baz);
+    this.manager.role('test.baz', this.baz);
 
 
     const tree = {
@@ -83,9 +83,9 @@ describe('request(manager, tree, req)', function() {
     this.foo = Sinon.spy(co(function*() { return null; }));
     this.manager.role('foo', this.foo);
     this.bar = Sinon.spy(co(function*() { return null; }));
-    this.manager.role('bar', this.bar);
+    this.manager.role('test.bar', this.bar);
     this.baz = Sinon.spy(co(function*() { return 'baz'; }));
-    this.manager.role('baz', this.baz);
+    this.manager.role('test.baz', this.baz);
 
 
     const tree = {
@@ -112,9 +112,9 @@ describe('request(manager, tree, req)', function() {
     this.foo = Sinon.spy(co(function*() { return null; }));
     this.manager.role('foo', this.foo);
     this.bar = Sinon.spy(co(function*() { return null; }));
-    this.manager.role('bar', this.bar);
+    this.manager.role('test.bar', this.bar);
     this.baz = Sinon.spy(co(function*() { return null; }));
-    this.manager.role('baz', this.baz);
+    this.manager.role('test.baz', this.baz);
 
 
     const tree = {
@@ -151,6 +151,17 @@ describe('request(manager, tree, req)', function() {
 
     expect(promise)
       .to.be.rejectedWith('test error');
+  });
+
+  it('should throw when role is not defined', function() {
+    const tree = {
+      'test': [ 'none' ]
+    };
+    const request = { params: { } };
+    const promise = checkRequest(this.manager, tree, request);
+
+    return expect(promise)
+      .to.be.rejectedWith("Role 'test.none' is not defined");
   });
 
 });

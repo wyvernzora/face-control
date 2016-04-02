@@ -12,12 +12,12 @@ before(function() {
 
   FaceControl.scope('test', { hint: 'testId' }, co(function*() { return 'test'; }));
 
-  FaceControl.role('foo', co(function*(ent) { return ent; }));
-  FaceControl.role('err', co(function*() { throw new Error('test error'); }));
+  FaceControl.role('test.foo', co(function*(ent) { return ent; }));
+  FaceControl.role('test.err', co(function*() { throw new Error('test error'); }));
 
   FaceControl.action('greet', [ 'test.foo' ]);
   FaceControl.action('crash', [ 'test.err' ]);
-  FaceControl.action('deny', [ 'foo' ]);
+  FaceControl.action('deny', [ ]);
 
 });
 
