@@ -30,13 +30,8 @@ it('should call next() if everything checks out', function(done) {
   mware(request, null, (err) => {
     expect(err)
       .not.to.exist;
-    expect(request)
-      .to.have.property('scope')
-      .that.is.a('function');
-    expect(request.scope('test'))
-      .to.equal('test');
 
-    const promise = request.can('greet');
+    const promise = FaceControl.can(request, 'greet');
     expect(promise)
       .to.eventually.equal(true);
 
@@ -56,7 +51,7 @@ it('should call next() if request is denied', function(done) {
       .to.be.instanceOf(Error)
       .to.have.property('message', 'Permission denied: deny');
 
-    const promise = request.can('deny');
+    const promise = FaceControl.can(request, 'deny');
     expect(promise)
       .to.eventually.equal(false);
 
@@ -76,7 +71,7 @@ it('should call next() if an error occurs', function(done) {
       .to.be.instanceOf(Error)
       .to.have.property('message', 'test error');
 
-    const promise = request.can('crash');
+    const promise = FaceControl.can(request, 'crash');
     expect(promise)
       .to.be.rejectedWith('test error');
 
