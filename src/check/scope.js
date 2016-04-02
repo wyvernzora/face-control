@@ -17,7 +17,7 @@ const debug = Debug('fc:scope');
  * We don't want to accidentally overwrite anything in the request
  * object, therefore we hide the scope cache behind a symbol.
  */
-export const $$cache = Symbol();
+export const $$cache = '$fc_cache$';
 
 
 /**
