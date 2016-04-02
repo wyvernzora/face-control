@@ -26,6 +26,9 @@ export const $$cache = '$fc_cache$';
 export default async function scope(manager, request, name) {
   const cache = (request[$$cache] = request[$$cache] || { });
 
+  /* @@global scope always results in null */
+  if (name === '@@global') { return null; }
+
   /* If we already have the scope cached, proceed */
   if (cache[name]) {
     debug(Chalk.bold.green('cached') + ` ${name}`);

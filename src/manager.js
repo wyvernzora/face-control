@@ -22,6 +22,7 @@ export default class Manager {
     this.roles   = { };
     this.actions = { };
     this.implies = { };
+    this.priority = [ '@@global' ];
   }
 
 
@@ -57,6 +58,7 @@ export default class Manager {
     debug(Chalk.bold.magenta('scope') + ` ${name} (hint=${scope.hint}; deps=${scope.deps.length})`);
     meta[scope.hint] = scope;
     this.scopes[name] = meta;
+    this.priority.push(name);
   }
 
 
