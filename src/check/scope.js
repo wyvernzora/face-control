@@ -56,13 +56,6 @@ export default async function scope(manager, request, name) {
   debug(Chalk.bold.red('fetch') + ` ${name}`);
   const entity = await Bluebird.try(() => strategy.callback(request));
 
-  /* If we fail, we got a 404 on our hands */
-  if (!entity) {
-    const err = new Error(`${_.capitalize(name)} not found.`);
-    err.status = 404;
-    throw err;
-  }
-
   /* Save to scope cache and return */
   return (cache[name] = entity);
 }

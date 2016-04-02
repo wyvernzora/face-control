@@ -113,11 +113,4 @@ describe('scope(manager, request, name)', function() {
       .to.be.rejectedWith('No suitable strategy found for scope \'foo\'');
   });
 
-  it('should throw if no callback returns falsy value', function() {
-    const promise = checkScope(this.manager, { params: { } }, 'akarin');
-
-    expect(promise)
-      .to.be.rejectedWith('Akarin not found.');
-  });
-
 });
