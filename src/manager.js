@@ -105,7 +105,12 @@ export default class Manager {
    * Sets up a role implication.
    */
   imply(role, ...others) {
-    others = _.flatten(others);
+    role = role.toLowerCase();
+    others = _
+      .chain(others)
+      .flatten()
+      .map(i => i.toLowerCase())
+      .value();
 
     for (const r of others) {
       const meta = (this.implies[r] = this.implies[r] || { });
