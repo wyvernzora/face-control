@@ -31,8 +31,8 @@ gulp.task('default', [ 'build' ]);
 /*!
  * Delete previous builds.
  */
-gulp.task('clean', function(cb) {
-  del([ 'lib/**' ], cb);
+gulp.task('clean', function() {
+  return del([ 'lib/**' ]);
 });
 
 
