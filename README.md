@@ -1,8 +1,6 @@
 # Face Control
 
-[![Circle CI][7]][8]
-[![Code Climate][3]][4]
-[![Test Coverage][5]][6]
+[![Codeship][7]][8]
 [![NPM][9]][10]
 [![License][11]][2]
 
@@ -121,12 +119,8 @@ And that's it! Face Control will do the rest.
 [1]: https://github.com/tschaub/authorized
 [2]: https://opensource.org/licenses/MIT
 
-[3]: https://codeclimate.com/github/jluchiji/face-control/badges/gpa.svg
-[4]: https://codeclimate.com/github/jluchiji/face-control
-[5]: https://codeclimate.com/github/jluchiji/face-control/badges/coverage.svg
-[6]: https://codeclimate.com/github/jluchiji/face-control/coverage
-[7]: https://circleci.com/gh/jluchiji/face-control.svg?style=shield
-[8]: https://circleci.com/gh/jluchiji/face-control
+[7]: https://img.shields.io/codeship/c5436a60-2fa6-0134-9fe2-0637f2a9daca.svg?maxAge=2592000
+[8]: https://codeship.com/projects/163976
 [9]: https://img.shields.io/npm/v/face-control.svg
 [10]: https://www.npmjs.com/package/face-control
 [11]: https://img.shields.io/npm/l/face-control.svg
