@@ -1,7 +1,7 @@
 {
   "name": "face-control",
   "description": "Intelligent access management for express.js",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "homepage": "https://github.com/jluchiji/face-control",
   "author": {
     "name": "Denis Luchkin-Zhou",
@@ -40,7 +40,6 @@
     "babel-preset-stage-3": "^6.11.0",
     "babel-register": "^6.9.0",
     "ava": "^0.15.2",
-    "babel-eslint": "^6.1.2",
     "babel-plugin-add-module-exports": "^0.2.1",
     "del": "^2.0.2",
     "eslint": "^3.1.1",
