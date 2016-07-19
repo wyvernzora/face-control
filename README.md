@@ -36,10 +36,18 @@ the `fleet` scope.
 /* https://galactic-federation.net/ship/:shipId */
 
 /* Teaches Face Control how to find the ship info */
-FaceControl.scope('ship', { hint: 'shipId' }, ...);
+FaceControl.scope('ship', { hint: 'shipId' }, async req => db.ships.find(req.params.shipId));
 
 /* Teaches Face Control how to find fleet info from ship info */
-FaceControl.scope('fleet', { hint: 'shipId', deps: 'ship' }, ...);
+FaceControl.scope('fleet', { hint: 'shipId', deps: 'ship' }, async req => {
+
+  /* Since 'ship' is a dependency, it will be stored here */
+  const ship = req.$fc_cache$.ship;
+
+  /* Find the 'fleet' based on the ship */
+  return db.fleets.find(ship.fleetId);
+
+});
 
 ```
 As you can see, `hint` tells Face Control to use the provided callback when
@@ -58,13 +66,11 @@ FaceControl.scope('fleet', { hint: 'fleetId' }, ...);
 
 ### Role
 A role signifies a set of actions a person is allowed to perform. Roles can be
-global or tied to a specific scope. For the purpose of definition, roles are not
-bound to any scope, but Face Control will conveniently provide you the scope that
-was established for the request in question. It's magic, isn't it?
+global or tied to a specific scope. It's magic, isn't it?
 
 ```js
 
-FaceControl.role('captain', function(entity, role, request) {
+FaceControl.role('ship:captain', function(entity, role, request) {
 
   /* When the role `captain` is used without scope, it makes no sense */
   if (!entity) { throw new Error('Captain must have a ship!'); }
