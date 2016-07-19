@@ -4,165 +4,158 @@
  * @author  Denis Luchkin-Zhou <denis@ricepo.com>
  * @license MIT
  */
+const test         = require('ava');
 
-const Manager      = dofile('lib/manager');
+const Manager      = require('../src/manager');
 
 
-beforeEach(function() {
-  this.manager = new Manager();
+/**
+ * Prepare a new instance for each test
+ */
+test.beforeEach(t => {
+  t.context = new Manager();
 });
 
 
-describe('constructor()', function() {
+/**
+ * Test cases start
+ */
+test('init', t => {
 
-  it('should initialize the manager instance', function() {
+  const m = t.context;
 
-    expect(this.manager)
-      .to.have.property('scopes')
-      .that.deep.equals({ });
-    expect(this.manager)
-      .to.have.property('roles')
-      .that.deep.equals({ });
-    expect(this.manager)
-      .to.have.property('actions')
-      .that.deep.equals({ });
-    expect(this.manager)
-      .to.have.property('implies')
-      .that.deep.equals({ });
-
-  });
-
-});
-
-
-describe('scope(name, options, callback)', function() {
-
-  it('should define a new scope', function() {
-    const callback = () => { };
-    this.manager.scope('test', null, callback);
-
-    const scopes = this.manager.scopes;
-    expect(scopes)
-      .to.have.property('test');
-    expect(scopes.test)
-      .to.have.property('@@null')
-      .that.exists;
-    expect(scopes.test['@@null'])
-      .to.have.property('deps')
-      .that.deep.equals([ ]);
-    expect(scopes.test['@@null'])
-      .to.have.property('callback')
-      .that.equals(callback);
-  });
-
-  it('should allow optional options', function() {
-    const callback = () => { };
-    this.manager.scope('test', callback);
-
-    const scopes = this.manager.scopes;
-    expect(scopes)
-      .to.have.property('test');
-    expect(scopes.test)
-      .to.have.property('@@null')
-      .that.exists;
-    expect(scopes.test['@@null'])
-      .to.have.property('deps')
-      .that.deep.equals([ ]);
-    expect(scopes.test['@@null'])
-      .to.have.property('callback')
-      .that.equals(callback);
-  });
-
-  it('should use hint and deps', function() {
-    this.manager.scope('test', { hint: 'foo', deps: 'bar' }, () => { });
-
-    const scopes = this.manager.scopes;
-    expect(scopes.test)
-      .to.have.property('foo')
-      .that.exists;
-    expect(scopes.test.foo)
-      .to.have.property('deps')
-      .that.deep.equals([ 'bar' ]);
-
-  });
-
-  it('should throw when redefining', function() {
-    this.manager.scope('test', { hint: 'foo' }, () => { });
-
-    expect(() => {
-      this.manager.scope('TEST', { hint: 'foo' }, () => { });
-    }).to.throw('Cannot overwrite scope \'test\' with hint \'foo\'');
-
-  });
+  t.deepEqual(m.scopes, { });
+  t.deepEqual(m.roles, { });
+  t.deepEqual(m.actions, { });
+  t.deepEqual(m.implies, { });
 
 });
 
 
-describe('role(name, callback)', function() {
+test('scope -> new', t => {
 
-  it('should define a new role', function() {
-    const callback = () => { };
-    this.manager.role('test', callback);
+  const m = t.context;
 
-    const roles = this.manager.roles;
-    expect(roles)
-      .to.have.property('test')
-      .that.is.a('function')
-      .that.equals(callback);
-  });
+  const cb = () => { };
+  m.scope('test', null, cb);
 
-  it('should throw when redefining', function() {
-    this.manager.role('test', () => { });
+  const s = m.scopes.test['@@null'];
 
-    expect(() => {
-      this.manager.role('test', () => { });
-    }).to.throw('Cannot overwrite role \'test\'');
 
-  });
+  t.is(s.deps.length, 0);
+  t.is(s.callback, cb);
 
 });
 
 
-describe('action(name, roles)', function() {
+test('scope -> no options', t => {
 
-  it('should define new action', function() {
-    this.manager.action('test', ['foo', 'bar']);
+  const m = t.context;
 
-    const actions = this.manager.actions;
-    expect(actions)
-      .to.have.property('test')
-      .that.exists;
-    expect(actions.test)
-      .to.deep.equal([ 'foo', 'bar' ]);
-  });
+  const cb = () => { };
+  m.scope('test', cb);
 
-  it('should throw when redefining', function() {
-    this.manager.action('test', ['foo', 'bar']);
+  const s = m.scopes.test['@@null'];
 
-    expect(() => {
-      this.manager.action('test', ['foo', 'bar']);
-    }).to.throw('Cannot overwrite action \'test\'');
-  });
+
+  t.is(s.deps.length, 0);
+  t.is(s.callback, cb);
 
 });
 
 
-describe('imply(role, ...others)', function() {
+test('scope -> hint / deps', t => {
 
-  it('should apply implication', function() {
-    this.manager.imply('test', 'foo', 'bar');
+  const m = t.context;
 
-    const imply = this.manager.implies;
-    expect(imply)
-      .to.have.property('foo')
-      .to.have.property('implies');
-    expect(imply.foo.implies.has('test'))
-      .to.be.true;
-    expect(imply)
-      .to.have.property('foo')
-      .to.have.property('implies');
-    expect(imply.bar.implies.has('test'))
-      .to.be.true;
-  });
+  const cb = () => { };
+  m.scope('test', { hint: 'foo', deps: 'bar' }, cb);
+
+  const s = m.scopes.test.foo;
+
+
+  t.is(s.deps.length, 1);
+  t.is(s.deps[0], 'bar');
+  t.is(s.callback, cb);
+
+});
+
+
+test('scope -> overwrite', t => {
+
+  const m = t.context;
+  m.scope('test', { hint: 'foo' }, () => { });
+
+  const a = () => m.scope('test', { hint: 'foo' }, () => { });
+
+  t.throws(a, "Cannot overwrite scope 'test' with hint 'foo'");
+
+});
+
+
+test('role -> new', t => {
+
+  const m = t.context;
+
+  const cb = () => { };
+  m.role('test', cb);
+
+
+  const a = m.roles;
+
+  t.is(a.test, cb);
+
+});
+
+
+test('role -> overwrite', t => {
+
+  const m = t.context;
+
+  m.role('test', () => { });
+
+  const a = () => m.role('TEST', () => { });
+
+  t.throws(a, "Cannot overwrite role 'test'");
+
+});
+
+
+test('action -> new', t => {
+
+  const m = t.context;
+
+  m.action('test', [ 'foo', 'bar' ]);
+
+  const a = m.actions;
+
+  t.deepEqual(a.test, [ 'foo', 'bar' ]);
+
+});
+
+
+test('action -> overwrite', t => {
+
+  const m = t.context;
+
+  m.action('test', [ 'foo', 'bar' ]);
+
+  const a = () => m.action('test', [ 'foo', 'bar' ]);
+
+  t.throws(a, "Cannot overwrite action 'test'");
+
+});
+
+
+test('imply -> new', t => {
+
+  const m = t.context;
+
+  m.imply('test', 'foo', 'bar');
+
+  const a = m.implies;
+
+  t.true(a.foo.implies.has('test'));
+  t.true(a.bar.implies.has('test'));
 
 });

@@ -20,21 +20,21 @@ const sourcemaps   = require('gulp-sourcemaps');
 /*!
  * Load plugin configuration files.
  */
-const package      = require('./package.json');
-const eslintrc     = package.eslintConfig;
-const babelrc      = package.babel;
+const eslintrc     = JSON.parse(fs.readFileSync('.eslintrc'));
+const babelrc      = JSON.parse(fs.readFileSync('.babelrc'));
+
 
 /*!
  * Default build target.
  */
-gulp.task('default', [ 'test' ]);
+gulp.task('default', [ 'build' ]);
 
 
 /*!
  * Delete previous builds.
  */
-gulp.task('clean', function() {
-  return del([ 'lib/**' ]);
+gulp.task('clean', function(cb) {
+  del([ 'lib/**' ], cb);
 });
 
 
@@ -70,39 +70,6 @@ const lint = function() {
 };
 gulp.task('lint', lint);
 gulp.task('relint', ['clean'], lint);
-
-
-/*!
- * Run the test suit.
- */
-gulp.task('test', ['build'], function() {
-
-  gulp.src([ 'test/index.spec.js' ], { read: false })
-  .pipe(mocha({ reporter: 'spec' }));
-
-});
-
-
-/*!
- * Test coverage.
- */
-gulp.task('coverage', ['build'], function(done) {
-
-  gulp.src(['lib/**/*.js'])
-    .pipe(istanbul())
-    .pipe(istanbul.hookRequire())
-    .on('finish', function() {
-      gulp.src(['test/index.spec.js'])
-        .pipe(mocha())
-        .pipe(istanbul.writeReports({
-          dir: 'coverage',
-          reportOpts: { dir: 'coverage' },
-          reporters: ['text-summary', 'html', 'lcov']
-        }))
-        .on('end', done);
-    });
-
-});
 
 
 /*!

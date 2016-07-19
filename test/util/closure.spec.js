@@ -1,32 +1,29 @@
 /**
- * test/util/expand.spec.js
+ * test/util/closure.spec.js
  *
  * @author  Denis Luchkin-Zhou <denis@ricepo.com>
  * @license MIT
  */
+const test         = require('ava');
 
-const Manager      = dofile('lib/manager');
-const closure      = dofile('lib/util/closure');
+const Manager      = require('../../src/manager');
+const Closure      = require('../../src/util/closure');
 
 
-describe('closure(manager, roles)', function() {
+test(t => {
 
-  beforeEach(function() {
-    this.manager = new Manager();
+  const m = new Manager();
 
-    this.manager.imply('foo', 'bar');
-    this.manager.imply('bar', 'baz');
+  m.imply('foo', 'bar');
+  m.imply('bar', 'baz');
 
-    this.manager.imply('first', 'second');
-    this.manager.imply('second', 'third');
-  });
+  m.imply('first', 'second');
+  m.imply('second', 'third');
 
-  it('should compute the implication closure of roles', function() {
-    const expected = [ 'baz', 'bar', 'foo', 'third', 'second', 'first' ];
-    const actual = closure(this.manager, [ 'baz', 'third' ]);
 
-    expect(actual)
-      .to.deep.equal(expected);
-  });
+  const e = [ 'bar', 'baz', 'first', 'foo', 'second', 'third' ];
+  const a = Closure(m, [ 'baz', 'third' ]);
+
+  t.deepEqual(a.sort(), e);
 
 });

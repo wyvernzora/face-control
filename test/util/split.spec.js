@@ -1,37 +1,38 @@
 /**
- * test/util/split.spec.js
+ * test/util/expand.spec.js
  *
  * @author  Denis Luchkin-Zhou <denis@ricepo.com>
  * @license MIT
  */
+const test         = require('ava');
 
-const split        = dofile('lib/util/split');
+const Split        = require('../../src/util/split');
 
 
-describe('split(role)', function() {
+test('unscoped', t => {
 
-  it('should recognize unscoped roles', function() {
-    const expected = { scope: '@@global', role: 'test' };
-    const actual = split('test');
+  const e = { scope: '@@global', role: 'test' };
+  const a = Split('test');
 
-    expect(actual)
-      .to.deep.equal(expected);
-  });
+  t.deepEqual(a, e);
 
-  it('should recognize scoped roles', function() {
-    const expected = { scope: 'foo', role: 'bar' };
-    const actual = split('foo.bar');
+});
 
-    expect(actual)
-      .to.deep.equal(expected);
-  });
 
-  it('should throw on bad role name', function() {
+test('scoped', t => {
 
-    expect(function() {
-      split('foo:bar.baz');
-    }).to.throw('Invalid role name: foo:bar.baz');
+  const e = { scope: 'foo', role: 'bar' };
+  const a = Split('foo.bar');
 
-  });
+  t.deepEqual(a, e);
+
+});
+
+
+test('bad role name', t => {
+
+  const a = () => Split('foo:bar.baz');
+
+  t.throws(a, 'Invalid role name: foo:bar.baz');
 
 });

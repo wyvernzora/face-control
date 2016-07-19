@@ -4,113 +4,130 @@
  * @author  Denis Luchkin-Zhou <denis@ricepo.com>
  * @license MIT
  */
+const test         = require('ava');
 
-const Manager      = dofile('lib/manager');
-const checkScope   = dofile('lib/check/scope').default;
-const $$cache      = dofile('lib/check/scope').$$cache;
+const Sinon        = require('sinon');
 
-
-describe('scope(manager, request, name)', function() {
-
-  beforeEach(function() {
-    this.manager = new Manager();
-
-    this.manager.scope('foo', {
-      hint: 'fooId'
-    }, co(function*() {
-      return 'foo';
-    }));
-    this.manager.scope('foo', {
-      hint: 'barId',
-      deps: 'bar'
-    }, co(function*() {
-      return 'bar:foo';
-    }));
-    this.manager.scope('bar', {
-      hint: 'barId'
-    }, co(function*() {
-      return 'bar';
-    }));
-    this.manager.scope('bar', co(function*() {
-      return '@@null:bar';
-    }));
-    this.manager.scope('akarin', co(function*() {
-      return null;
-    }));
-
-  });
+const Manager      = require('../../src/manager');
+const Scope        = require('../../src/check/scope').default;
 
 
-  it('should establish unhinted scope', co(function*() {
-    const request = { params: { } };
+/**
+ * Prepare test data
+ */
+test.beforeEach(t => {
 
-    const expected = '@@null:bar';
-    const actual = yield checkScope(this.manager, request, 'bar');
+  const m = t.context = new Manager();
 
-    expect(actual)
-      .to.equal(expected);
+  m.scope('foo', {
+    hint: 'fooId'
+  }, async () => 'foo');
+  m.scope('foo', {
+    hint: 'barId',
+    deps: 'bar'
+  }, async () => 'bar:foo');
+  m.scope('bar', {
+    hint: 'barId'
+  }, async () => 'bar');
+  m.scope('bar', async () => '@@null:bar');
+  m.scope('akarin', async () => null);
 
-    const cache = request[$$cache];
-    expect(cache)
-      .to.have.property('bar', '@@null:bar');
-  }));
+});
 
-  it('should establish hinted scope', co(function*() {
-    const request = { params: { barId: 0 } };
 
-    const expected = 'bar';
-    const actual = yield checkScope(this.manager, request, 'bar');
+/**
+ * Test cases start
+ */
+test('unhinted', async t => {
 
-    expect(actual)
-      .to.equal(expected);
+  const r = { params: { } };
 
-    const cache = request[$$cache];
-    expect(cache)
-      .to.have.property('bar', 'bar');
-  }));
 
-  it('should establish hinted scope with deps', co(function*() {
-    const request = { params: { barId: 0 } };
+  const e = '@@null:bar';
+  const a = await Scope(t.context, r, 'bar');
 
-    const expected = 'bar:foo';
-    const actual = yield checkScope(this.manager, request, 'foo');
+  t.is(a, e);
 
-    expect(actual)
-      .to.equal(expected);
 
-    const cache = request[$$cache];
-    expect(cache)
-      .to.have.property('foo', 'bar:foo');
-    expect(cache)
-      .to.have.property('bar', 'bar');
-  }));
+  const c = r.$fc_cache$;
 
-  it('should use cache when available', co(function*() {
-    const callback = Sinon.spy(co(function*() { return 'baz'; }));
-    this.manager.scope('baz', callback);
+  t.is(c.bar, '@@null:bar');
 
-    const request = { params: { } };
+});
 
-    yield checkScope(this.manager, request, 'baz');
-    yield checkScope(this.manager, request, 'baz');
 
-    expect(callback)
-      .to.be.calledOnce;
-  }));
+test('hinted', async t => {
 
-  it('should throw if scope is not defined', function() {
+  const r = { params: { barId: 0 } };
 
-    const promise = checkScope(this.manager, { params: { } }, 'test');
 
-    expect(promise)
-      .to.be.rejectedWith('Scope \'test\' is not defined.');
-  });
+  const e = 'bar';
+  const a = await Scope(t.context, r, 'bar');
 
-  it('should result in null if no suitable strategy found', function() {
-    const promise = checkScope(this.manager, { params: { } }, 'foo');
+  t.is(a, e);
 
-    expect(promise)
-      .to.eventually.equal(null);
-  });
+
+  const c = r.$fc_cache$;
+
+  t.is(c.bar, 'bar');
+
+});
+
+
+test('hinted w/ deps', async t => {
+
+  const r = { params: { barId: 0 } };
+
+
+  const e = 'bar:foo';
+  const a = await Scope(t.context, r, 'foo');
+
+  t.is(a, e);
+
+
+  const c = r.$fc_cache$;
+
+  t.is(c.foo, 'bar:foo');
+  t.is(c.bar, 'bar');
+
+});
+
+
+test('cache', async t => {
+
+  const cb = Sinon.spy(async () => 'baz');
+  t.context.scope('baz', cb);
+
+
+  const r = { params: { } };
+
+
+  await Scope(t.context, r, 'baz');
+  await Scope(t.context, r, 'baz');
+
+
+  t.true(cb.calledOnce);
+
+});
+
+
+test('undefined', async t => {
+
+  const r = { params: { } };
+
+  const p = Scope(t.context, r, 'test');
+
+  t.throws(p, "Scope 'test' is not defined.");
+
+});
+
+
+test('no strategy', async t => {
+
+  const r = { params: { } };
+
+  const a = await Scope(t.context, r, 'foo');
+
+  t.is(a, null);
 
 });

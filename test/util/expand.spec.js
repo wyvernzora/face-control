@@ -4,36 +4,43 @@
  * @author  Denis Luchkin-Zhou <denis@ricepo.com>
  * @license MIT
  */
+const test         = require('ava');
 
-const Manager      = dofile('lib/manager');
-const expand       = dofile('lib/util/expand');
+const Manager      = require('../../src/manager');
+const Expand       = require('../../src/util/expand');
 
 
-describe('expand(manager, name)', function() {
+/**
+ * Prepare test data
+ */
+test.beforeEach(t => {
 
-  beforeEach(function() {
-    this.manager = new Manager();
+  const m = t.context = new Manager();
 
-    this.manager.imply('foo', 'bar');
-    this.manager.imply('bar', 'baz');
-  });
+  m.imply('foo', 'bar');
+  m.imply('bar', 'baz');
 
-  it('should recursively expand role implications', function() {
-    const expected = [ 'baz', 'bar', 'foo' ];
-    const actual = expand(this.manager, 'baz');
+});
 
-    expect(actual)
-      .to.deep.equal(expected);
-  });
 
-  it('should handle when a role implies nothing', function() {
-    this.manager.implies.test = { };
+/**
+ * Test cases start
+ */
+test(t => {
 
-    const expected = [ 'test' ];
-    const actual = expand(this.manager, 'test');
+  const e = [ 'bar', 'baz', 'foo' ];
+  const a = Expand(t.context, 'baz');
 
-    expect(actual)
-      .to.deep.equal(expected);
-  });
+  t.deepEqual(a.sort(), e);
+
+});
+
+
+test('imply nothing', t => {
+
+  const e = [ 'test' ];
+  const a = Expand(t.context, 'test');
+
+  t.deepEqual(a.sort(), e);
 
 });

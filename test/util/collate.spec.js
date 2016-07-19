@@ -4,38 +4,46 @@
  * @author  Denis Luchkin-Zhou <denis@ricepo.com>
  * @license MIT
  */
+const test         = require('ava');
 
-const Manager      = dofile('lib/manager');
-const collate      = dofile('lib/util/collate');
+const Manager      = require('../../src/manager');
+const Collate      = require('../../src/util/collate');
 
 
-describe('collate(manager, actions)', function() {
+/**
+ * Prepare test data
+ */
+test.beforeEach(t => {
 
-  beforeEach(function() {
-    this.manager = new Manager();
+  const m = t.context = new Manager();
 
-    this.manager.action('one', [ 'a.foo', 'b.bar', 'baz' ]);
-    this.manager.action('two', [ 'a.foo', 'a.bar', 'baz', 'test' ]);
-  });
+  m.action('one', [ 'a.foo', 'b.bar', 'baz' ]);
+  m.action('two', [ 'a.foo', 'a.bar', 'baz', 'test' ]);
 
-  it('should compute the scope tree', function() {
-    const expected = {
-      '@@global': [ 'baz', 'test' ],
-      'a': [ 'foo', 'bar' ],
-      'b': [ 'bar' ]
-    };
-    const actual = collate(this.manager, [ 'one', 'two' ]);
+});
 
-    expect(actual)
-      .to.deep.equal(expected);
-  });
 
-  it('should throw when encountering undefined actions', function() {
+/**
+ * Test cases start
+ */
+test(t => {
 
-    expect(() => {
-      collate(this.manager, [ 'hello' ]);
-    }).to.throw('Action \'hello\' is not defined.');
+  const e = {
+    '@@global': [ 'baz', 'test' ],
+    'a': [ 'foo', 'bar' ],
+    'b': [ 'bar' ]
+  };
+  const a = Collate(t.context, [ 'one', 'two' ]);
 
-  });
+  t.deepEqual(e, a);
+
+});
+
+
+test('undefined action', t => {
+
+  const a = () => Collate(t.context, [ 'hello' ]);
+
+  t.throws(a, "Action 'hello' is not defined.");
 
 });
