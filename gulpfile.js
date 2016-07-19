@@ -10,11 +10,9 @@ const gulp         = require('gulp');
 const fs           = require('fs');
 const del          = require('del');
 const babel        = require('gulp-babel');
-const mocha        = require('gulp-mocha');
 const eslint       = require('gulp-eslint');
 const notify       = require('gulp-notify');
 const changed      = require('gulp-changed');
-const istanbul     = require('gulp-istanbul');
 const sourcemaps   = require('gulp-sourcemaps');
 
 /*!

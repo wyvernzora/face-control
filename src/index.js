@@ -44,7 +44,7 @@ function FaceControl(...actions) {
     promise
       .then(result => {
         if (!result) {
-          const error = new Error(`Permission denied: ${ actions.join(', ') }`);
+          const error = new Error(`Permission denied: ${actions.join(', ')}`);
           error.name = 'AuthorizationError';
           throw error;
         }

@@ -46,7 +46,11 @@ export default class Manager {
     const scope = { };
     scope.name = name;
     scope.hint = options.hint || '@@null';
-    scope.deps = _([options.deps]).flatten().compact().value();
+    scope.deps = _
+      .chain([ options.deps ])
+      .flatten()
+      .compact()
+      .value();
     scope.callback = callback;
 
     /* Cannot overwrite existing hint */
