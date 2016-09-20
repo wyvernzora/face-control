@@ -17,10 +17,10 @@ export default function expand(manager, name) {
   const meta = manager.implies[name];
 
   /* No implications */
-  if (!meta || !meta.implies) { return [ name ]; }
+  if (!meta || !meta.implies) { return [name]; }
 
   /* Recursively expand implications */
-  const expansion = new Set([ name ]);
+  const expansion = new Set([name]);
   for (const role of meta.implies) {
     expand(manager, role).forEach(expansion.add, expansion);
     expansion.add(role);

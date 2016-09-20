@@ -22,7 +22,7 @@ export default class Manager {
     this.roles   = { };
     this.actions = { };
     this.implies = { };
-    this.priority = [ '@@global' ];
+    this.priority = ['@@global'];
   }
 
 
@@ -47,7 +47,7 @@ export default class Manager {
     scope.name = name;
     scope.hint = options.hint || '@@null';
     scope.deps = _
-      .chain([ options.deps ])
+      .chain([options.deps])
       .flatten()
       .compact()
       .value();
@@ -64,7 +64,7 @@ export default class Manager {
     }
 
     /* Setup the scope info */
-    debug(Chalk.bold.magenta('scope') + ` ${name} (hint=${scope.hint}; deps=${scope.deps.length})`);
+    debug(`${Chalk.bold.magenta('scope')} ${name} (hint=${scope.hint}; deps=${scope.deps.length})`);
     meta[scope.hint] = scope;
     this.scopes[name] = meta;
   }
@@ -82,7 +82,7 @@ export default class Manager {
     }
 
     /* Setup the role definition */
-    debug(Chalk.bold.magenta('role') + ` ${name}`);
+    debug(`${Chalk.bold.magenta('role')} ${name}`);
     this.roles[name] = callback;
   }
 
@@ -100,7 +100,7 @@ export default class Manager {
 
     /* Setup the action with its implication closure */
     this.actions[name] = closure(this, roles);
-    debug(Chalk.bold.magenta('action') + ` ${name}`);
+    debug(`${Chalk.bold.magenta('action')} ${name}`);
     debug(this.actions[name]);
   }
 

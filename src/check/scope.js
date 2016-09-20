@@ -31,7 +31,7 @@ export default async function scope(manager, request, name) {
 
   /* If we already have the scope cached, proceed */
   if (cache[name]) {
-    debug(Chalk.bold.green('cached') + ` ${name}`);
+    debug(`${Chalk.bold.green('cached')} ${name}`);
     return cache[name];
   }
 
@@ -45,10 +45,10 @@ export default async function scope(manager, request, name) {
   const key = _.find(Object.keys(request.params), i => strategies[i]) || '@@null';
 
   /* If the strategy found is undefined, we got problems */
-  debug(Chalk.bold.yellow('hint') + ` ${key}`);
+  debug(`${Chalk.bold.yellow('hint')} ${key}`);
   const strategy = strategies[key];
   if (!strategy) {
-    debug(Chalk.bold.red('no strategy') + ` ${name}`);
+    debug(`${Chalk.bold.red('no strategy')} ${name}`);
     return null;
   }
 
@@ -57,7 +57,7 @@ export default async function scope(manager, request, name) {
   await Bluebird.all(promises);
 
   /* Establish the target scope itself */
-  debug(Chalk.bold.red('fetch') + ` ${name}`);
+  debug(`${Chalk.bold.red('fetch')} ${name}`);
   const entity = await Bluebird.try(() => strategy.callback(request));
 
   /* Save to scope cache and return */

@@ -40,10 +40,10 @@ export default async function request(manager, tree, req) {
       }
       const result = await Bluebird.resolve(callback(entity, info, req));
       if (result) {
-        debug(Chalk.bold.green('allow') + ` ${scope}:${key}`);
+        debug(`${Chalk.bold.green('allow')} ${scope}:${key}`);
         return true;
       }
-      debug(Chalk.bold.red('deny') + ` ${scope}:${key}`);
+      debug(`${Chalk.bold.red('deny')} ${scope}:${key}`);
     }
   }
 

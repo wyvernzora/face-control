@@ -17,7 +17,7 @@ import _           from 'lodash';
  */
 export default function closure(manager, roles) {
   return _(roles)
-    .map(r => manager.implies[r] ? manager.implies[r].closure : [ r ])
+    .map(r => (manager.implies[r] ? manager.implies[r].closure : [r]))
     .flatten()
     .uniq()
     .value();
