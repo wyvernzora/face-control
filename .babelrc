@@ -3,5 +3,7 @@
     "es2015-node4",
     "stage-3"
   ],
-  "plugins": [ ]
+  "plugins": [
+    "add-module-exports"
+  ]
 }
