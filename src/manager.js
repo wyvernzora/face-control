@@ -92,6 +92,7 @@ export default class Manager {
    */
   action(name, roles) {
     name = name.toLowerCase();
+    roles = roles.map(i => i.toLowerCase());
 
     /* Disallow redefinition of roles */
     if (this.actions[name]) {
