@@ -55,7 +55,7 @@
     "gulp-sourcemaps": "^1.5.2",
     "gulp-yaml": "^1.0.1",
     "merge-stream": "^1.0.0",
-    "nyc": "^8.1.0",
+    "nyc": "^10.3.0",
     "sinon": "^1.15.4"
   },
   "keywords": [
