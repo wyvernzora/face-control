@@ -45,7 +45,7 @@
     "eslint": "^3.1.1",
     "eslint-config-ricepo": "^2.0.2",
     "eslint-plugin-ava": "^3.0.0",
-    "eslint-plugin-import": "^1.15.0",
+    "eslint-plugin-import": "^2.3.0",
     "eslint-plugin-lodash": "^1.10.3",
     "gulp": "^3.9.0",
     "gulp-babel": "^6.1.2",
